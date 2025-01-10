@@ -1,0 +1,120 @@
+### PARTE 1: Reconocimiento del dominio enlinea.unapiquitos.edu.pe
+
+1. Consulta DNS del dominio
+   Comando:
+   dig enlinea.unapiquitos.edu.pe
+   Descripción:
+   - Realiza consultas a servidores DNS.
+   - Salida: Muestra la dirección IP resuelta (109.205.179.172).
+
+2. Identificación del registro SOA
+   Comando:
+   dig SOA enlinea.unapiquitos.edu.pe
+   Descripción:
+   - Solicita el registro Start of Authority.
+   - Resultado: guy.ns.cloudflare.com como servidor primario y dns.cloudflare.com como contacto.
+
+3. Transferencia de zona DNS
+   Comando:
+   dig @guy.ns.cloudflare.com enlinea.unapiquitos.edu.pe axfr
+   Descripción:
+   - @guy.ns.cloudflare.com: Servidor DNS primario.
+   - axfr: Solicita transferencia de zona.
+   - Resultado: Transfer failed, indicando que la transferencia está deshabilitada.
+
+4. Búsqueda WHOIS
+   Comando:
+   whois unapiquitos.edu.pe
+   Descripción:
+   - Recupera información del dominio.
+   - Salida: Datos del registrante, contactos administrativos y estado del dominio.
+
+5. Petición GET al servidor web
+   Herramienta: Live HTTP Headers
+   Pasos:
+   - URL: https://enlinea.unapiquitos.edu.pe
+   - Método: GET
+   - Resultado: Información de cabecera, como Host, User-Agent, Accept.
+
+6. Google Hacking
+   Comandos:
+   site:unapiquitos.edu.pe
+   site:unapiquitos.edu.pe filetype:pdf
+   site:unapiquitos.edu.pe intitle:login
+   Descripción:
+   - Busca información en el dominio específico.
+   - filetype:pdf busca archivos PDF.
+   - intitle:login busca páginas con formularios de inicio de sesión.
+
+---
+
+### PARTE 2: Reconocimiento avanzado
+
+1. Escaneo rápido del sistema
+   Comando:
+   nmap -v -sS -O 172.16.24.129
+   Descripción:
+   - -sS: Escaneo SYN (sigiloso).
+   - -O: Detecta sistema operativo.
+   - Resultado: Identifica servicios y sistema operativo (Linux 2.6.X).
+
+2. Escaneo completo de puertos
+   Comando:
+   nmap -v -p- -sS -sV -O --min-rate=1000 --max-retries=1 --host-timeout=30m --scan-delay=1ms 172.16.24.129
+   Descripción:
+   - -p-: Escanea todos los puertos (1-65535).
+   - -sV: Detecta versiones de servicios.
+   - --min-rate=1000: Envía al menos 1000 paquetes por segundo.
+   - Salida: Detecta puertos abiertos y versiones de servicios (Ej.: FTP, Apache, MySQL).
+
+3. Escaneo UDP
+   Comando:
+   nmap -v -sU -p- --open --version-all --min-rate=5000 --max-retries=0 --host-timeout=5m --scan-delay=0ms --unprivileged 172.16.24.129
+   Descripción:
+   - -sU: Escaneo de puertos UDP.
+   - --open: Muestra solo puertos abiertos.
+   - Salida: Servicios UDP detectados, como DNS y NFS.
+
+4. Escaneo TCP SYN y TCP Connect
+   Comandos:
+   nmap -v -sS 172.16.24.129
+   nmap -v -sT 172.16.24.129
+   Descripción:
+   - -sS: Escaneo SYN (sigiloso).
+   - -sT: Escaneo Connect (establece conexión completa).
+   - Diferencia: -sS es más rápido y menos detectable.
+
+5. Escaneo de puertos específicos
+   Comando:
+   nmap -v -p 22,23,80,443 -oN resultado_escaneo.txt 172.16.24.129
+   Descripción:
+   - -p 22,23,80,443: Especifica los puertos a escanear.
+   - -oN: Guarda resultados en archivo.
+
+6. Comparación entre T5 y T1
+   Comandos:
+   nmap -p 22,23 -T5 172.16.24.129
+   nmap -p 22,23 -T1 172.16.24.129
+   Descripción:
+   - -T5: Escaneo agresivo (rápido, pero detectable).
+   - -T1: Escaneo lento (sigiloso, pero tardado).
+   - Diferencia: T5 es significativamente más rápido, pero menos seguro.
+
+7. Escaneo de vulnerabilidades HTTPS/HTTP
+   Comandos:
+   nmap -p 80,443 --script http-vuln* 172.16.24.129
+   nmap -p 443 --script ssl-* 172.16.24.129
+   Descripción:
+   - http-vuln*: Busca vulnerabilidades HTTP.
+   - ssl-*: Busca problemas en configuraciones SSL/TLS.
+
+---
+
+### Explotación y pruebas
+
+1. Acceso a FTP y creación de carpeta
+   Comandos:
+   ftp 172.16.24.129
+   mkdir desafio_4
+   Descripción:
+   - Accede al servidor FTP y crea una carpeta llamada "desafio_4".
